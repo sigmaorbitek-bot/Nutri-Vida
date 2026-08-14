@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta name="description" content="Painel administrativo da Nutri+Vida." />
+
+    <meta name="theme-color" content="#1a3a2a" />
+
+    <title>Painel Admin | Nutri+Vida</title>
+
+    <link rel="icon" type="image/png" href="../assets/favicon.png" />
+
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <!-- ==================================================
+         CABEÇALHO
+         ================================================== -->
+
+    <nav class="admin-navbar">
+      <div class="admin-logo">
+        <img src="../assets/favicon.png" alt="Logo da Nutri+Vida" />
+
+        <div class="admin-logo-text">
+          <h1>Nutri<span>+</span>Vida</h1>
+
+          <p>Painel administrativo</p>
+        </div>
+      </div>
+
+      <button
+        id="btn-sair-topo"
+        class="btn-sair"
+        type="button"
+        onclick="sair()"
+      >
+        Sair
+      </button>
+    </nav>
+
+    <!-- ==================================================
+         CONTEÚDO PRINCIPAL
+         ================================================== -->
+
+    <main class="admin-main">
+      <!-- ==================================================
+             CABEÇALHO DO PAINEL
+             ================================================== -->
+
+      <header class="admin-header">
+        <span class="admin-tag"> ⚙️ Administração </span>
+
+        <h2>Painel da Nutri+Vida</h2>
+
+        <p>Gerencie produtos, pedidos e funcionamento da loja.</p>
+      </header>
+
+      <!-- ==================================================
+             RESUMO
+             ================================================== -->
+
+      <section class="resumo-admin" aria-label="Resumo da loja">
+        <!-- TOTAL DE PRODUTOS -->
+
+        <article class="resumo-card">
+          <span class="resumo-icon" aria-hidden="true"> 📦 </span>
+
+          <div class="resumo-info">
+            <small> Produtos </small>
+
+            <strong id="total-produtos"> 0 </strong>
+          </div>
+        </article>
+
+        <!-- TOTAL DE PEDIDOS -->
+
+        <article class="resumo-card">
+          <span class="resumo-icon" aria-hidden="true"> 🛒 </span>
+
+          <div class="resumo-info">
+            <small> Pedidos </small>
+
+            <strong id="total-pedidos"> 0 </strong>
+          </div>
+        </article>
+
+        <!-- STATUS DA LOJA -->
+
+        <article class="resumo-card">
+          <span id="icone-status-loja" class="resumo-icon" aria-hidden="true">
+            🟡
+          </span>
+
+          <div class="resumo-info">
+            <small> Loja </small>
+
+            <strong id="status-loja"> Verificando... </strong>
+          </div>
+        </article>
+      </section>
+
+      <!-- ==================================================
+             CADASTRAR PRODUTO
+             ================================================== -->
+
+      <section id="secao-cadastro" class="admin-section">
+        <div class="section-titulo">
+          <span aria-hidden="true"> 📦 </span>
+
+          <div>
+            <h2>Cadastrar Produto</h2>
+
+            <p>Adicione um novo produto ao catálogo.</p>
+          </div>
+        </div>
+
+        <form id="form-produto" class="formulario">
+          <!-- NOME -->
+
+          <div class="campo">
+            <label for="nome"> Nome do produto </label>
+
+            <input
+              type="text"
+              id="nome"
+              name="nome"
+              placeholder="Ex.: Aveia em flocos"
+              maxlength="100"
+              required
+            />
+          </div>
+
+          <!-- PREÇO -->
+
+          <div class="campo">
+            <label for="preco"> Preço </label>
+
+            <input
+              type="number"
+              id="preco"
+              name="preco"
+              placeholder="Ex.: 10,50"
+              step="0.01"
+              min="0"
+              required
+            />
+          </div>
+
+          <!-- DESCRIÇÃO -->
+
+          <div class="campo campo-largo">
+            <label for="descricao"> Descrição </label>
+
+            <textarea
+              id="descricao"
+              name="descricao"
+              placeholder="Descreva o produto"
+              maxlength="500"
+              rows="4"
+            ></textarea>
+          </div>
+
+          <!-- ESTOQUE -->
+
+          <div class="campo">
+            <label for="estoque"> Estoque </label>
+
+            <input
+              type="number"
+              id="estoque"
+              name="estoque"
+              placeholder="Ex.: 20"
+              min="0"
+              required
+            />
+          </div>
+
+          <!-- UNIDADE -->
+
+          <div class="campo">
+            <label for="unidade"> Unidade de venda </label>
+
+            <select id="unidade" name="unidade">
+              <option value="unidade">📦 Unidade</option>
+
+              <option value="grama">⚖️ Peso</option>
+            </select>
+          </div>
+
+          <!-- FOTO -->
+
+          <div class="campo campo-largo">
+            <label for="foto"> 📷 Foto do produto </label>
+
+            <input type="file" id="foto" name="foto" accept="image/*" />
+
+            <small class="ajuda-campo"> JPG, PNG ou WEBP. </small>
+          </div>
+
+          <!-- BOTÃO -->
+
+          <div class="campo campo-largo">
+            <button type="submit" class="btn-principal">
+              + Cadastrar Produto
+            </button>
+          </div>
+
+          <!-- MENSAGEM -->
+
+          <p
+            id="msg-cadastro"
+            class="mensagem"
+            role="status"
+            aria-live="polite"
+          ></p>
+        </form>
+      </section>
+
+      <!-- ==================================================
+             PRODUTOS CADASTRADOS
+             ================================================== -->
+
+      <section id="secao-produtos" class="admin-section">
+        <div class="section-titulo">
+          <span aria-hidden="true"> 🛍️ </span>
+
+          <div>
+            <h2>Produtos Cadastrados</h2>
+
+            <p>Gerencie os produtos disponíveis na loja.</p>
+          </div>
+        </div>
+
+        <!-- BUSCA DE PRODUTO -->
+
+        <div class="admin-busca">
+          <input
+            type="search"
+            id="buscar-admin"
+            placeholder="Buscar produto..."
+            aria-label="Buscar produto"
+          />
+        </div>
+
+        <!-- LISTA -->
+
+        <div id="lista-admin" class="lista-admin">
+          <p class="estado-admin">Carregando produtos...</p>
+        </div>
+      </section>
+
+      <!-- ==================================================
+             PEDIDOS
+             ================================================== -->
+
+      <section id="secao-pedidos" class="admin-section">
+        <div class="section-titulo">
+          <span aria-hidden="true"> 🛒 </span>
+
+          <div>
+            <h2>Pedidos Recebidos</h2>
+
+            <p>Acompanhe os pedidos feitos pelos clientes.</p>
+          </div>
+        </div>
+
+        <!-- FILTRO DE PEDIDOS -->
+
+        <div class="filtros-pedidos">
+          <select
+            id="filtro-status-pedido"
+            aria-label="Filtrar pedidos por status"
+          >
+            <option value="todos">Todos os pedidos</option>
+
+            <option value="pendente">Pendentes</option>
+
+            <option value="preparo">Em preparo</option>
+
+            <option value="entregue">Entregues</option>
+
+            <option value="cancelado">Cancelados</option>
+          </select>
+        </div>
+
+        <!-- LISTA DE PEDIDOS -->
+
+        <div id="lista-pedidos" class="lista-pedidos">
+          <p class="estado-admin">Nenhum pedido carregado.</p>
+        </div>
+      </section>
+
+      <!-- ==================================================
+             FUNCIONAMENTO DA LOJA
+             ================================================== -->
+
+      <section id="secao-horarios" class="admin-section">
+        <div class="section-titulo">
+          <span aria-hidden="true"> 🕒 </span>
+
+          <div>
+            <h2>Funcionamento da Loja</h2>
+
+            <p>Configure os dias e horários de atendimento.</p>
+          </div>
+        </div>
+
+        <!-- STATUS MANUAL -->
+
+        <div class="controle-loja">
+          <div>
+            <strong> Status da loja </strong>
+
+            <p id="texto-status-manual">Automático pelo horário</p>
+          </div>
+
+          <label class="switch">
+            <input type="checkbox" id="loja-aberta-manualmente" />
+
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <!-- HORÁRIOS -->
+
+        <div id="lista-horarios" class="lista-horarios">
+          <!--
+                    Os horários serão carregados
+                    e salvos pelo painel.js.
+                -->
+        </div>
+
+        <!-- SALVAR -->
+
+        <button id="btn-salvar-horarios" type="button" class="btn-principal">
+          Salvar horários
+        </button>
+
+        <p
+          id="msg-horarios"
+          class="mensagem"
+          role="status"
+          aria-live="polite"
+        ></p>
+      </section>
+
+      <!-- ==================================================
+             SAIR
+             ================================================== -->
+
+      <section class="admin-sair">
+        <button type="button" onclick="sair()">Sair do painel</button>
+      </section>
+    </main>
+
+    <!-- ==================================================
+         JAVASCRIPT
+         ================================================== -->
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="painel.js"></script>
+  </body>
+</html>

@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="description" content="Confira os produtos naturais da Nutri+Vida.">
+
+    <meta name="theme-color" content="#1a3a2a">
+
+    <title>Nutri+Vida | Catálogo</title>
+
+    <link rel="icon" type="image/png" href="../assets/favicon.png">
+
+    <link rel="stylesheet" href="catalogo.css">
+
+</head>
+
+
+<body>
+
+
+    <!-- ==================================================
+         CABEÇALHO
+         ================================================== -->
+
+    <nav class="navbar">
+
+        <div class="navbar-logo">
+
+            <img src="../assets/favicon.png" alt="Logo da Nutri+Vida" class="icon">
+
+            <div class="navbar-nome">
+
+                <h1>
+                    Nutri<span>+</span>Vida
+                </h1>
+
+                <p>
+                    Produtos naturais
+                </p>
+
+            </div>
+
+        </div>
+
+    </nav>
+
+
+    <!-- ==================================================
+         CABEÇALHO DO CATÁLOGO
+         ================================================== -->
+
+    <header class="catalogo-header">
+
+        <div class="catalogo-header-conteudo">
+
+            <span class="catalogo-tag">
+                🌿 Nutri+Vida
+            </span>
+
+            <h2>
+                Nossos Produtos
+            </h2>
+
+            <p>
+                Encontre produtos selecionados para
+                cuidar da sua saúde e bem-estar.
+            </p>
+
+        </div>
+
+    </header>
+
+
+    <!-- ==================================================
+         CONTEÚDO PRINCIPAL
+         ================================================== -->
+
+    <main class="catalogo-main">
+
+        <section class="produtos-section" aria-labelledby="titulo-produtos">
+
+            <!-- TOPO DOS PRODUTOS -->
+
+            <div class="produtos-topo">
+
+                <div>
+
+                    <h2 id="titulo-produtos">
+                        Produtos 🌿
+                    </h2>
+
+                    <p id="quantidade-produtos">
+                        Carregando produtos...
+                    </p>
+
+                </div>
+
+
+                <!-- BUSCA -->
+
+                <div class="filtros-produtos">
+
+                    <input type="search" id="buscar-produto" placeholder="Buscar produto..."
+                        aria-label="Buscar produto">
+
+                </div>
+
+            </div>
+
+
+            <!-- ==================================================
+                 LISTA DE PRODUTOS
+                 ================================================== -->
+
+            <div id="lista-produtos" class="lista-produtos">
+
+                <!--
+                    Os produtos serão carregados
+                    pelo catalogo.js através do Supabase.
+                -->
+
+            </div>
+
+
+            <!-- ==================================================
+                 CARREGANDO PRODUTOS
+                 ================================================== -->
+
+            <div id="produtos-carregando" class="estado-produtos">
+
+                <span class="estado-icon" aria-hidden="true">
+                    🌿
+                </span>
+
+                <p>
+                    Carregando produtos...
+                </p>
+
+            </div>
+
+
+            <!-- ==================================================
+                 NENHUM PRODUTO
+                 ================================================== -->
+
+            <div id="produtos-vazio" class="estado-produtos oculto">
+
+                <span class="estado-icon" aria-hidden="true">
+                    🛒
+                </span>
+
+                <p>
+                    Nenhum produto encontrado.
+                </p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- ==================================================
+         BOTÃO FLUTUANTE DO CARRINHO
+         ================================================== -->
+
+    <button id="carrinho-btn" class="carrinho-btn" type="button" onclick="toggleCarrinho()" aria-label="Abrir carrinho">
+
+        <span aria-hidden="true">
+            🛒
+        </span>
+
+        <span>
+            Carrinho
+        </span>
+
+        <span id="carrinho-count" class="carrinho-count">
+            0
+        </span>
+
+    </button>
+
+
+    <!-- ==================================================
+         PAINEL DO CARRINHO
+         ================================================== -->
+
+    <aside id="carrinho-painel" class="carrinho-painel" aria-label="Carrinho de compras">
+
+        <!-- CABEÇALHO DO CARRINHO -->
+
+        <div class="carrinho-painel-header">
+
+            <h3>
+                🛒 Meu Carrinho
+            </h3>
+
+            <button id="btn-fechar-carrinho" type="button" onclick="fecharCarrinho()" aria-label="Fechar carrinho">
+                ✕
+            </button>
+
+        </div>
+
+
+        <!-- CARRINHO VAZIO -->
+
+        <div id="carrinho-vazio" class="carrinho-vazio">
+
+            <span aria-hidden="true">
+                🌿
+            </span>
+
+            <p>
+                Seu carrinho está vazio.
+            </p>
+
+            <small>
+                Adicione produtos para continuar.
+            </small>
+
+        </div>
+
+
+        <!-- ITENS DO CARRINHO -->
+
+        <div id="itens-carrinho" class="itens-carrinho"></div>
+
+
+        <!-- RESUMO DO CARRINHO -->
+
+        <div id="carrinho-painel-footer" class="carrinho-painel-footer oculto">
+
+            <div class="carrinho-resumo">
+
+                <span>
+                    Total
+                </span>
+
+                <strong id="carrinho-total">
+                    R$ 0,00
+                </strong>
+
+            </div>
+
+            <button id="btn-finalizar" type="button">
+                Finalizar Pedido →
+            </button>
+
+        </div>
+
+    </aside>
+
+
+    <!-- ==================================================
+         FUNDO DO CARRINHO
+         ================================================== -->
+
+    <div id="carrinho-overlay" class="carrinho-overlay" onclick="fecharCarrinho()"></div>
+
+
+    <!-- ==================================================
+         MENSAGEM TOAST
+         ================================================== -->
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+
+    <!-- ==================================================
+         BOTÃO VOLTAR
+         ================================================== -->
+
+    <div class="sair">
+
+        <button id="btn-sair" type="button" onclick="Voltar()">
+            ← Voltar para Loja
+        </button>
+
+    </div>
+
+
+    <!-- ==================================================
+         RODAPÉ
+         ================================================== -->
+
+    <footer class="rodape-catalogo">
+
+        <p class="ft-copy">
+            &copy; 2026 Nutri+Vida - Todos os direitos reservados.
+        </p>
+
+        <p class="ft-copy">
+            Altinho • Pernambuco
+        </p>
+
+        <a href="../painel/index.html" class="link-admin">
+            ⚙️ Área do sistema
+        </a>
+
+        <p class="desenvolvedor">
+
+            Desenvolvido com 💜 por
+
+            <a href="https://sigmaorbitek.vercel.app/" target="_blank" rel="noopener noreferrer">
+                Σ Sigma Orbitek
+            </a>
+
+        </p>
+
+    </footer>
+
+
+    <!-- ==================================================
+         JAVASCRIPT
+         ================================================== -->
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="catalogo.js"></script>
+
+</body>
+
+</html>

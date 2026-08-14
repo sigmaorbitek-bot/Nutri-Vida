@@ -1,0 +1,668 @@
+/* ===================================================
+   NUTRI+VIDA - TELA DE BOAS-VINDAS
+   =================================================== */
+
+/* ===================================================
+   VARIÁVEIS
+   =================================================== */
+
+:root {
+  --verde-escuro: #1a3a2a;
+  --verde-medio: #2d5a3d;
+
+  --dourado: #c8941a;
+  --dourado-claro: #e8b84b;
+
+  --creme: #faf7f2;
+
+  --texto: #1a3a2a;
+  --texto-secundario: #555;
+
+  --sombra: rgba(26, 58, 42, 0.15);
+}
+
+/* ===================================================
+   RESET
+   =================================================== */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ===================================================
+   HTML
+   =================================================== */
+
+html {
+  min-height: 100%;
+}
+
+/* ===================================================
+   BODY
+   =================================================== */
+
+body {
+  min-height: 100vh;
+
+  background-image: url("./assets/fundo.png");
+  background-repeat: repeat;
+  background-size: 300px;
+
+  display: flex;
+  flex-direction: column;
+
+  animation: fadeInTela 1s ease;
+
+  overflow-x: hidden;
+}
+
+/* ===================================================
+   TELA DE BOAS-VINDAS
+   =================================================== */
+
+#tela-boas-vindas {
+  width: 100%;
+}
+
+/* ===================================================
+   STATUS DA LOJA
+   =================================================== */
+
+.status-loja {
+    position: relative;
+    z-index: 1;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 12px;
+
+    width: 100%;
+
+    margin-bottom: 22px;
+
+    padding: 12px 16px;
+
+    border-radius: 12px;
+
+    background: rgba(26, 58, 42, 0.06);
+}
+
+.status-icone {
+    font-size: 1.3rem;
+}
+
+.status-conteudo {
+    display: flex;
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    gap: 2px;
+
+    text-align: left;
+}
+
+.status-conteudo strong {
+    color: var(--verde-escuro);
+
+    font-size: 0.95rem;
+}
+
+.status-conteudo span {
+    color: #777;
+
+    font-size: 0.8rem;
+}
+
+
+/* ===================================================
+   BOTÃO DESABILITADO
+   =================================================== */
+
+.bv-btn:disabled {
+    cursor: not-allowed;
+
+    opacity: 0.55;
+
+    transform: none;
+
+    box-shadow: none;
+
+    background: #777;
+
+    color: #ddd;
+}
+
+.bv-btn:disabled:hover {
+    transform: none;
+
+    box-shadow: none;
+}
+
+.bv-btn:disabled::before {
+    display: none;
+}
+
+/* ===================================================
+   CONTAINER
+   =================================================== */
+
+.boas-vindas-container {
+  width: 100%;
+  min-height: 100vh;
+
+  padding: 40px 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ===================================================
+   CAIXA PRINCIPAL
+   =================================================== */
+
+.boas-vindas-box {
+  position: relative;
+
+  width: 100%;
+  max-width: 520px;
+
+  background-color: var(--creme);
+
+  border-radius: 20px;
+
+  padding: 50px 40px;
+
+  text-align: center;
+
+  box-shadow: 0 15px 50px rgba(26, 58, 42, 0.3);
+
+  border-top: 6px solid var(--dourado);
+
+  overflow: hidden;
+
+  animation: subirCaixa 1s ease;
+}
+
+/* ===================================================
+   EFEITO DE BRILHO
+   =================================================== */
+
+.boas-vindas-box::before {
+  content: "";
+
+  position: absolute;
+
+  top: -50%;
+  left: -50%;
+
+  width: 200%;
+  height: 200%;
+
+  background: linear-gradient(
+    45deg,
+    transparent,
+    rgba(200, 148, 26, 0.05),
+    transparent
+  );
+
+  animation: brilho 3s linear infinite;
+
+  pointer-events: none;
+}
+
+/* ===================================================
+   LOGO
+   =================================================== */
+
+.bv-logo-container {
+  position: relative;
+  z-index: 1;
+}
+
+.bv-logo {
+  display: block;
+
+  width: 120px;
+  max-width: 40vw;
+
+  margin: 0 auto 20px;
+
+  animation: pulsarLogo 2s ease-in-out infinite;
+}
+
+/* ===================================================
+   TÍTULO
+   =================================================== */
+
+.bv-titulo {
+  position: relative;
+  z-index: 1;
+
+  font-family: Georgia, serif;
+
+  font-size: clamp(2rem, 5vw, 2.5rem);
+
+  color: var(--verde-escuro);
+
+  line-height: 1.2;
+
+  margin-bottom: 8px;
+}
+
+.bv-plus {
+  color: var(--dourado);
+
+  font-weight: bold;
+}
+
+/* ===================================================
+   SUBTÍTULO
+   =================================================== */
+
+.bv-subtitulo {
+  position: relative;
+  z-index: 1;
+
+  font-family: Georgia, serif;
+
+  font-size: clamp(0.95rem, 2.5vw, 1.1rem);
+
+  color: var(--verde-medio);
+
+  font-style: italic;
+
+  line-height: 1.5;
+
+  margin-bottom: 25px;
+}
+
+/* ===================================================
+   DIVISOR
+   =================================================== */
+
+.bv-divisor {
+  position: relative;
+  z-index: 1;
+
+  width: 80px;
+  height: 4px;
+
+  background: linear-gradient(90deg, var(--dourado), var(--dourado-claro));
+
+  border-radius: 2px;
+
+  margin: 0 auto 25px;
+}
+
+/* ===================================================
+   DESCRIÇÃO
+   =================================================== */
+
+.bv-descricao {
+  position: relative;
+  z-index: 1;
+
+  color: var(--texto-secundario);
+
+  font-size: 1rem;
+
+  line-height: 1.6;
+
+  max-width: 420px;
+
+  margin: 0 auto 30px;
+}
+
+/* ===================================================
+   DIFERENCIAIS
+   =================================================== */
+
+.bv-features {
+  position: relative;
+  z-index: 1;
+
+  display: flex;
+
+  justify-content: space-between;
+
+  gap: 15px;
+
+  margin-bottom: 35px;
+}
+
+.bv-feature {
+  flex: 1;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+
+  gap: 8px;
+}
+
+.bv-icon {
+  font-size: 1.8rem;
+
+  margin-bottom: 4px;
+}
+
+.bv-feature span:last-child {
+  color: var(--verde-escuro);
+
+  font-size: 0.85rem;
+
+  font-weight: bold;
+
+  line-height: 1.3;
+
+  text-align: center;
+}
+
+/* ===================================================
+   BOTÃO
+   =================================================== */
+
+.bv-btn {
+  position: relative;
+  z-index: 1;
+
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  max-width: 300px;
+
+  min-height: 54px;
+
+  padding: 14px 30px;
+
+  background: linear-gradient(135deg, var(--verde-escuro), var(--verde-medio));
+
+  color: var(--dourado-claro);
+
+  border: none;
+
+  border-radius: 50px;
+
+  font-family: Georgia, serif;
+
+  font-size: 1.1rem;
+
+  font-weight: bold;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+
+  box-shadow: 0 6px 20px rgba(26, 58, 42, 0.4);
+
+  margin-bottom: 20px;
+
+  overflow: hidden;
+}
+
+/* ===================================================
+   EFEITO DO BOTÃO
+   =================================================== */
+
+.bv-btn::before {
+  content: "";
+
+  position: absolute;
+
+  inset: 0;
+
+  background: linear-gradient(135deg, var(--verde-medio), var(--dourado));
+
+  opacity: 0;
+
+  transition: opacity 0.3s ease;
+
+  pointer-events: none;
+}
+
+.bv-btn:hover::before {
+  opacity: 1;
+}
+
+.bv-btn:hover {
+  transform: translateY(-3px);
+
+  box-shadow: 0 10px 30px rgba(26, 58, 42, 0.5);
+}
+
+.bv-btn:active {
+  transform: translateY(-1px);
+}
+
+/* ===================================================
+   TEXTO ABAIXO DO BOTÃO
+   =================================================== */
+
+.bv-rodape {
+  position: relative;
+  z-index: 1;
+
+  color: #888;
+
+  font-size: 0.85rem;
+
+  font-style: italic;
+
+  line-height: 1.5;
+}
+
+/* ===================================================
+   ANIMAÇÕES
+   =================================================== */
+
+@keyframes fadeInTela {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes subirCaixa {
+  from {
+    opacity: 0;
+
+    transform: translateY(50px) scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes pulsarLogo {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes brilho {
+  0% {
+    transform: translateX(-100%) translateY(-100%) rotate(45deg);
+  }
+
+  100% {
+    transform: translateX(100%) translateY(100%) rotate(45deg);
+  }
+}
+
+/* ===================================================
+   SAÍDA DA TELA
+   =================================================== */
+
+.saindo {
+  animation: fadeOutTela 0.6s ease forwards;
+}
+
+@keyframes fadeOutTela {
+  from {
+    opacity: 1;
+
+    transform: scale(1);
+  }
+
+  to {
+    opacity: 0;
+
+    transform: scale(0.95);
+
+    pointer-events: none;
+  }
+}
+
+/* ===================================================
+   TABLET
+   =================================================== */
+
+@media (max-width: 768px) {
+  .boas-vindas-container {
+    padding: 30px 16px;
+  }
+
+  .boas-vindas-box {
+    padding: 40px 30px;
+  }
+
+  .bv-logo {
+    width: 105px;
+  }
+
+  .bv-features {
+    flex-direction: column;
+
+    gap: 18px;
+  }
+
+  .bv-feature {
+    flex-direction: row;
+
+    justify-content: center;
+
+    gap: 12px;
+  }
+
+  .bv-feature span:last-child {
+    text-align: left;
+  }
+}
+
+/* ===================================================
+   CELULARES
+   =================================================== */
+
+@media (max-width: 480px) {
+  .boas-vindas-container {
+    padding: 20px 12px;
+  }
+
+  .boas-vindas-box {
+    padding: 32px 20px;
+
+    border-radius: 16px;
+
+    border-top-width: 5px;
+  }
+
+  .bv-logo {
+    width: 90px;
+
+    margin-bottom: 15px;
+  }
+
+  .bv-subtitulo {
+    margin-bottom: 20px;
+  }
+
+  .bv-descricao {
+    font-size: 0.95rem;
+
+    margin-bottom: 25px;
+  }
+
+  .bv-features {
+    gap: 15px;
+
+    margin-bottom: 28px;
+  }
+
+  .bv-icon {
+    font-size: 1.5rem;
+  }
+
+  .bv-feature span:last-child {
+    font-size: 0.8rem;
+  }
+
+  .bv-btn {
+    max-width: none;
+
+    font-size: 1rem;
+
+    min-height: 52px;
+
+    padding: 13px 20px;
+  }
+
+  .bv-rodape {
+    font-size: 0.8rem;
+  }
+
+  .rodape {
+    padding: 22px 14px 25px;
+  }
+
+  .ft-copy,
+  .desenvolvedor {
+    font-size: 0.78rem;
+  }
+}
+
+/* ===================================================
+   CELULARES MUITO PEQUENOS
+   =================================================== */
+
+@media (max-width: 360px) {
+  .boas-vindas-box {
+    padding: 28px 16px;
+  }
+
+  .bv-logo {
+    width: 78px;
+  }
+
+  .bv-descricao {
+    font-size: 0.9rem;
+
+    line-height: 1.5;
+  }
+
+  .bv-btn {
+    font-size: 0.95rem;
+  }
+}
