@@ -547,6 +547,12 @@ async function excluirProduto(id) {
   }
 
   try {
+    mostrarMensagem("Excluindo produto...");
+
+    /* =================================================
+           BUSCAR A FOTO DO PRODUTO
+           ================================================= */
+
     const { data: produto, error: buscaError } = await supabaseClient
       .from("produto")
       .select("foto")
@@ -556,43 +562,103 @@ async function excluirProduto(id) {
     if (buscaError) {
       console.error("Erro ao buscar produto:", buscaError);
 
-      window.alert("Não foi possível localizar o produto.");
+      mostrarMensagem("Não foi possível localizar o produto.", "erro");
 
       return;
     }
 
-    const { error } = await supabaseClient
+    /* =================================================
+           EXCLUIR PRODUTO DO BANCO
+           ================================================= */
+
+    const { error: deleteError } = await supabaseClient
       .from("produto")
       .delete()
       .eq("id", id);
 
-    if (error) {
-      console.error("Erro ao excluir produto:", error);
+    if (deleteError) {
+      console.error("Erro ao excluir produto:", deleteError);
 
-      window.alert("Não foi possível excluir o produto.");
+      mostrarMensagem("Não foi possível excluir o produto.", "erro");
 
       return;
     }
 
-    /*
-     * Remove a imagem do Storage,
-     * caso exista uma foto.
-     */
+    /* =================================================
+           EXCLUIR FOTO DO STORAGE
+           ================================================= */
+
+    let fotoRemovida = true;
 
     if (produto && produto.foto) {
-      await removerImagemDoStorage(produto.foto);
+      fotoRemovida = await removerImagemDoStorage(produto.foto);
     }
+
+    /* =================================================
+           ATUALIZAR LISTA
+           ================================================= */
 
     await carregarProdutos();
 
-    mostrarMensagem("Produto excluído com sucesso.");
+    if (fotoRemovida) {
+      mostrarMensagem("Produto excluído com sucesso!");
+    } else {
+      mostrarMensagem(
+        "Produto excluído, mas a foto permaneceu no Storage.",
+        "erro",
+      );
+    }
   } catch (erro) {
-    console.error("Erro ao excluir:", erro);
+    console.error("Erro ao excluir produto:", erro);
 
-    window.alert("Ocorreu um erro ao excluir o produto.");
+    mostrarMensagem("Ocorreu um erro ao excluir o produto.", "erro");
   }
 }
 
+/* =====================================================
+   REMOVER IMAGEM DO STORAGE
+   ===================================================== */
+
+async function removerImagemDoStorage(urlPublica) {
+  try {
+    const marcador = "/storage/v1/object/public/produtos/";
+
+    const indice = urlPublica.indexOf(marcador);
+
+    if (indice === -1) {
+      console.warn(
+        "URL da imagem não pertence ao bucket produtos:",
+        urlPublica,
+      );
+
+      return false;
+    }
+
+    const caminho = urlPublica.substring(indice + marcador.length);
+
+    if (!caminho) {
+      return false;
+    }
+
+    console.log("Removendo imagem:", caminho);
+
+    const { error } = await supabaseClient.storage
+      .from("produtos")
+      .remove([caminho]);
+
+    if (error) {
+      console.error("Erro ao remover imagem:", error);
+
+      return false;
+    }
+
+    return true;
+  } catch (erro) {
+    console.error("Erro inesperado ao remover imagem:", erro);
+
+    return false;
+  }
+}
 /* =====================================================
    REMOVER IMAGEM DO STORAGE
    ===================================================== */
