@@ -1,24 +1,25 @@
 /* =====================================================
    NUTRI+VIDA - PAINEL ADMINISTRATIVO
    ===================================================== */
-
 /* =====================================================
    CONFIGURAÇÃO DO SUPABASE
    ===================================================== */
 
-const SUPABASE_URL = "SUA_URL_DO_SUPABASE";
+const SUPABASE_URL = "https://pztyrnmxfmofpiuriswn.supabase.co";
 
-const SUPABASE_ANON_KEY = "SUA_CHAVE_PUBLICA_DO_SUPABASE";
+const SUPABASE_PUBLISHABLE_KEY =
+  "sb_publishable_HToq5W10V9rRlI1olAtXXg_mYqbc4ZR";
 
 /* =====================================================
-   CONEXÃO
+   CONEXÃO COM O SUPABASE
    ===================================================== */
 
 const supabaseClient = window.supabase.createClient(
   SUPABASE_URL,
-  SUPABASE_ANON_KEY,
+  SUPABASE_PUBLISHABLE_KEY,
 );
 
+console.log("Supabase conectado:", supabaseClient);
 /* =====================================================
    ELEMENTOS DA PÁGINA
    ===================================================== */
@@ -78,6 +79,84 @@ function limparFormulario() {
 }
 
 /* =====================================================
+   VALIDAR ARQUIVO
+   ===================================================== */
+
+function validarArquivoImagem(arquivo) {
+  if (!arquivo) {
+    return true;
+  }
+
+  const tiposPermitidos = ["image/jpeg", "image/png", "image/webp"];
+
+  const tamanhoMaximo = 5 * 1024 * 1024; // 5 MB
+
+  if (!tiposPermitidos.includes(arquivo.type)) {
+    mostrarMensagem("Use apenas JPG, PNG ou WEBP.", "erro");
+
+    return false;
+  }
+
+  if (arquivo.size > tamanhoMaximo) {
+    mostrarMensagem("A imagem deve ter no máximo 5 MB.", "erro");
+
+    return false;
+  }
+
+  return true;
+}
+
+/* =====================================================
+   CRIAR NOME DO ARQUIVO
+   ===================================================== */
+
+function gerarNomeArquivo(arquivo) {
+  const extensao = arquivo.name.split(".").pop().toLowerCase();
+
+  return `${Date.now()}-${crypto.randomUUID()}.${extensao}`;
+}
+
+/* =====================================================
+   UPLOAD DA IMAGEM
+   ===================================================== */
+
+async function enviarImagem(arquivo) {
+  if (!arquivo) {
+    return null;
+  }
+
+  const nomeArquivo = gerarNomeArquivo(arquivo);
+
+  console.log("Enviando imagem:", nomeArquivo);
+
+  const { error: uploadError } = await supabaseClient.storage
+    .from("produtos")
+    .upload(nomeArquivo, arquivo, {
+      cacheControl: "3600",
+      upsert: false,
+      contentType: arquivo.type,
+    });
+
+  if (uploadError) {
+    console.error("Erro no upload:", uploadError);
+
+    throw new Error("Não foi possível enviar a imagem.");
+  }
+
+  const { data: urlData } = supabaseClient.storage
+    .from("produtos")
+    .getPublicUrl(nomeArquivo);
+
+  if (!urlData || !urlData.publicUrl) {
+    throw new Error("Não foi possível obter a URL da imagem.");
+  }
+
+  console.log("Imagem enviada:", urlData.publicUrl);
+
+  return urlData.publicUrl;
+}
+
+/* =====================================================
    CADASTRAR PRODUTO
    ===================================================== */
 
@@ -87,6 +166,10 @@ async function cadastrarProduto(event) {
   mostrarMensagem("Cadastrando produto...");
 
   try {
+    /* =================================================
+           PEGAR VALORES
+           ================================================= */
+
     const nome = document.getElementById("nome").value.trim();
 
     const preco = Number(document.getElementById("preco").value);
@@ -99,8 +182,11 @@ async function cadastrarProduto(event) {
 
     const fotoInput = document.getElementById("foto");
 
+    const arquivo =
+      fotoInput && fotoInput.files.length > 0 ? fotoInput.files[0] : null;
+
     /* =================================================
-           VALIDAÇÃO
+           VALIDAÇÕES
            ================================================= */
 
     if (!nome) {
@@ -121,46 +207,49 @@ async function cadastrarProduto(event) {
       return;
     }
 
+    if (!validarArquivoImagem(arquivo)) {
+      return;
+    }
+
     /* =================================================
-           FOTO
+           UPLOAD DA FOTO
            ================================================= */
 
     let fotoUrl = null;
 
-    if (fotoInput && fotoInput.files && fotoInput.files.length > 0) {
-      const arquivo = fotoInput.files[0];
+    if (arquivo) {
+      mostrarMensagem("Enviando imagem...");
 
-      /*
-       * Por enquanto vamos guardar apenas
-       * a referência da foto.
-       *
-       * Na próxima etapa vamos fazer upload
-       * para o Supabase Storage.
-       */
-
-      fotoUrl = URL.createObjectURL(arquivo);
+      fotoUrl = await enviarImagem(arquivo);
     }
 
     /* =================================================
-           INSERIR PRODUTO
+           INSERT NO BANCO
            ================================================= */
+
+    mostrarMensagem("Salvando produto...");
 
     const { data, error } = await supabaseClient
       .from("produto")
       .insert([
         {
           nome: nome,
+
           preco: preco,
+
           descricao: descricao || null,
+
           estoque: estoque,
+
           foto: fotoUrl,
+
           unidade: unidade,
         },
       ])
       .select();
 
     /* =================================================
-           VERIFICAR ERRO
+           ERRO NO BANCO
            ================================================= */
 
     if (error) {
@@ -185,7 +274,7 @@ async function cadastrarProduto(event) {
   } catch (erro) {
     console.error("Erro inesperado:", erro);
 
-    mostrarMensagem("Ocorreu um erro inesperado.", "erro");
+    mostrarMensagem(erro.message || "Ocorreu um erro inesperado.", "erro");
   }
 }
 
@@ -266,11 +355,17 @@ function renderizarProdutos(lista) {
   }
 
   lista.forEach((produto) => {
+    /* =================================================
+               CARD
+               ================================================= */
+
     const card = document.createElement("article");
 
     card.className = "card-admin";
 
-    /* FOTO */
+    /* =================================================
+               FOTO
+               ================================================= */
 
     const imagem = document.createElement("img");
 
@@ -284,25 +379,33 @@ function renderizarProdutos(lista) {
       imagem.src = "../assets/produto-sem-foto.png";
     };
 
-    /* CONTEÚDO */
+    /* =================================================
+               CONTEÚDO
+               ================================================= */
 
     const conteudo = document.createElement("div");
 
     conteudo.className = "card-admin-conteudo";
 
-    /* NOME */
+    /* =================================================
+               NOME
+               ================================================= */
 
     const nome = document.createElement("h3");
 
     nome.textContent = produto.nome;
 
-    /* DESCRIÇÃO */
+    /* =================================================
+               DESCRIÇÃO
+               ================================================= */
 
     const descricao = document.createElement("p");
 
     descricao.textContent = produto.descricao || "Sem descrição cadastrada.";
 
-    /* PREÇO */
+    /* =================================================
+               PREÇO
+               ================================================= */
 
     const preco = document.createElement("p");
 
@@ -310,7 +413,9 @@ function renderizarProdutos(lista) {
 
     preco.textContent = formatarPreco(produto.preco);
 
-    /* ESTOQUE */
+    /* =================================================
+               ESTOQUE
+               ================================================= */
 
     const estoque = document.createElement("p");
 
@@ -318,11 +423,17 @@ function renderizarProdutos(lista) {
       produto.unidade || "unidade"
     }`;
 
-    /* AÇÕES */
+    /* =================================================
+               AÇÕES
+               ================================================= */
 
     const acoes = document.createElement("div");
 
     acoes.className = "card-admin-acoes";
+
+    /* =================================================
+               EDITAR
+               ================================================= */
 
     const btnEditar = document.createElement("button");
 
@@ -336,6 +447,10 @@ function renderizarProdutos(lista) {
       editarProduto(produto);
     });
 
+    /* =================================================
+               EXCLUIR
+               ================================================= */
+
     const btnRemover = document.createElement("button");
 
     btnRemover.type = "button";
@@ -348,11 +463,17 @@ function renderizarProdutos(lista) {
       excluirProduto(produto.id);
     });
 
+    /* =================================================
+               MONTAR AÇÕES
+               ================================================= */
+
     acoes.appendChild(btnEditar);
 
     acoes.appendChild(btnRemover);
 
-    /* MONTAGEM */
+    /* =================================================
+               MONTAR CARD
+               ================================================= */
 
     conteudo.appendChild(nome);
 
@@ -373,7 +494,7 @@ function renderizarProdutos(lista) {
 }
 
 /* =====================================================
-   BUSCA DE PRODUTOS
+   BUSCAR PRODUTOS
    ===================================================== */
 
 function filtrarProdutos() {
@@ -426,6 +547,20 @@ async function excluirProduto(id) {
   }
 
   try {
+    const { data: produto, error: buscaError } = await supabaseClient
+      .from("produto")
+      .select("foto")
+      .eq("id", id)
+      .single();
+
+    if (buscaError) {
+      console.error("Erro ao buscar produto:", buscaError);
+
+      window.alert("Não foi possível localizar o produto.");
+
+      return;
+    }
+
     const { error } = await supabaseClient
       .from("produto")
       .delete()
@@ -439,13 +574,54 @@ async function excluirProduto(id) {
       return;
     }
 
+    /*
+     * Remove a imagem do Storage,
+     * caso exista uma foto.
+     */
+
+    if (produto && produto.foto) {
+      await removerImagemDoStorage(produto.foto);
+    }
+
     await carregarProdutos();
 
     mostrarMensagem("Produto excluído com sucesso.");
   } catch (erro) {
-    console.error(erro);
+    console.error("Erro ao excluir:", erro);
 
     window.alert("Ocorreu um erro ao excluir o produto.");
+  }
+}
+
+/* =====================================================
+   REMOVER IMAGEM DO STORAGE
+   ===================================================== */
+
+async function removerImagemDoStorage(urlPublica) {
+  try {
+    const marcador = "/storage/v1/object/public/produtos/";
+
+    const indice = urlPublica.indexOf(marcador);
+
+    if (indice === -1) {
+      return;
+    }
+
+    const caminho = urlPublica.substring(indice + marcador.length);
+
+    if (!caminho) {
+      return;
+    }
+
+    const { error } = await supabaseClient.storage
+      .from("produtos")
+      .remove([caminho]);
+
+    if (error) {
+      console.warn("Não foi possível remover a imagem:", error);
+    }
+  } catch (erro) {
+    console.warn("Erro ao remover imagem:", erro);
   }
 }
 

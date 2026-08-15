@@ -2,38 +2,53 @@
    NUTRI+VIDA - CATÁLOGO
    ===================================================== */
 
+
 /* =====================================================
    CONFIGURAÇÃO DO SUPABASE
    ===================================================== */
 
-// URL do seu projeto Supabase
-const SUPABASE_URL = "COLE_AQUI_SUA_URL";
+const SUPABASE_URL =
+  "https://pztyrnmxfmofpiuriswn.supabase.co";
 
-// Chave pública do projeto
-const SUPABASE_ANON_KEY = "COLE_AQUI_SUA_CHAVE_ANON";
+const SUPABASE_PUBLISHABLE_KEY =
+  "sb_publishable_HToq5W10V9rRlI1olAtXXg_mYqbc4ZR";
+
 
 /* =====================================================
    CONEXÃO COM O SUPABASE
    ===================================================== */
 
-const supabaseClient = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_ANON_KEY,
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY
+  );
+
+
+console.log(
+  "Supabase conectado:",
+  supabaseClient
 );
+
 
 /* =====================================================
    ELEMENTOS DA PÁGINA
    ===================================================== */
 
-const listaProdutos = document.getElementById("lista-produtos");
+const listaProdutos =
+  document.getElementById("lista-produtos");
 
-const produtosCarregando = document.getElementById("produtos-carregando");
+const produtosCarregando =
+  document.getElementById("produtos-carregando");
 
-const produtosVazio = document.getElementById("produtos-vazio");
+const produtosVazio =
+  document.getElementById("produtos-vazio");
 
-const quantidadeProdutos = document.getElementById("quantidade-produtos");
+const quantidadeProdutos =
+  document.getElementById("quantidade-produtos");
 
-const buscaProduto = document.getElementById("buscar-produto");
+const buscaProduto =
+  document.getElementById("buscar-produto");
 
 /* =====================================================
    PRODUTOS
@@ -288,7 +303,7 @@ function mostrarToast(mensagem) {
    ===================================================== */
 
 function Voltar() {
-  window.location.href = "/index.html";
+  window.location.href = "../index.html";
 }
 
 /* =====================================================
