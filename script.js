@@ -2,7 +2,7 @@
 // HORÁRIO DE FUNCIONAMENTO
 // ==================================================
 
-//==const horarioFuncionamento = {
+const horarioFuncionamento = {
 
     // Domingo
     0: null,
@@ -58,7 +58,7 @@ const nomesDias = [
     "quinta-feira",
     "sexta-feira",
     "sábado"
-];==//
+];
 
 
 // ==================================================
